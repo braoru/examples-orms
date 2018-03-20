@@ -26,6 +26,9 @@ public class SessionUtil {
             // log severe messages that indicate serious failure.
             Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
         }
+        Logger.getLogger("org.hibernate").setLevel(Level.FINEST);
+        Logger.getLogger("com.cockroachlabs").setLevel(Level.FINEST);
+        Logger.getLogger("org.hibernate.engine.transaction.internal.jta.JtaTransaction").setLevel(Level.FINEST);
 
         Configuration configuration = new Configuration();
         configuration.configure("hibernate.cfg.xml");
@@ -55,7 +58,11 @@ public class SessionUtil {
             // Add the "jdbc:" prefix to the address and replace in configuration.
             dbAddr = "jdbc:" + dbAddr;
             configuration.setProperty("hibernate.connection.url", dbAddr);
+
+
         }
+
+        configuration.setProperty("hibernate.connection.autocommit", "false");
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())

@@ -1,6 +1,7 @@
 package com.cockroachlabs.services;
 
 import com.cockroachlabs.model.Customer;
+import com.cockroachlabs.model.Product;
 import com.cockroachlabs.util.SessionUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.hibernate.query.Query;
 import javax.ws.rs.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Path("/customer")
 public class CustomerService {
@@ -32,12 +34,27 @@ public class CustomerService {
     @POST
     @Produces("application/json")
     public String createCustomer(String body) {
+        Logger.getLogger("com.cockroachlabs").info("Create customer");
         try (Session session = SessionUtil.getSession()) {
+            session.beginTransaction();
             Customer newCustomer = mapper.readValue(body, Customer.class);
             session.save(newCustomer);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String body2 = "{\"id\": 1, \"name\": \"apple\", \"price\": 0.30}";
+            Product newProduct = mapper.readValue(body2, Product.class);
+            session.save(newProduct);
 
+            session.getTransaction().commit();
             return mapper.writeValueAsString(newCustomer);
         } catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }catch(Exception e){
+            e.printStackTrace();
             return e.toString();
         }
     }
@@ -57,6 +74,7 @@ public class CustomerService {
             return e.toString();
         }
     }
+
 
     @PUT
     @Path("/{customerID}")

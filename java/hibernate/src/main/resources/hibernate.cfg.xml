@@ -23,10 +23,12 @@
 
         <!-- Drop and re-create the database schema on startup -->
         <!--<property name="hbm2ddl.auto">validate</property>-->
-        <property name="hbm2ddl.auto">update</property>
+        <property name="hbm2ddl.auto">validate</property>
 
         <!-- org.hibernate.HibernateException: No CurrentSessionContext configured! -->
         <property name="hibernate.current_session_context_class">thread</property>
+
+        <property name="hibernate.transaction.coordinator_class">com.cockroachlabs.fix.CockroachDBTransactionCoordinatorBuilder</property>
 
     </session-factory>
 

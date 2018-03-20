@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
-@Table(name="orders")
+@Table(name="orders", indexes = {
+        @Index(columnList = "customer_id", name = "customer_id_idx")
+})
 public class Order {
 
     @Id
@@ -27,7 +29,11 @@ public class Order {
     @ManyToMany()
     @JoinTable(name="order_products",
                joinColumns=@JoinColumn(name="order_id"),
-               inverseJoinColumns=@JoinColumn(name="product_id"))
+               inverseJoinColumns=@JoinColumn(name="product_id"),
+               indexes = {
+                       @Index(columnList = "product_id", name = "product_id_idx")
+               }
+    )
     private Set<Product> products;
 
     public long getId() {
