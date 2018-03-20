@@ -40,31 +40,6 @@ import java.util.logging.Logger;
 public class ConcurrencyTest extends AbstractConcurrencyTest{
 
     @Test
-    public void testPing() throws Throwable {
-        Assert.assertEquals(10, 10);
-
-        launchApp();
-
-        Thread.sleep(5000);
-
-        AtomicInteger uniqueCounter = new AtomicInteger();
-        concurrentTest(new Ping(uniqueCounter));
-    }
-
-    @Test
-    public void testCreateCustomer() throws Throwable {
-        Logger.getLogger("com.cockroachlabs").info("Test message");
-        Assert.assertEquals(10, 10);
-
-        launchApp();
-
-        Thread.sleep(5000);
-
-        AtomicInteger uniqueCounter = new AtomicInteger();
-        concurrentTest(new CreateCustomer(uniqueCounter));
-    }
-
-    @Test
     public void testInflation() throws Throwable {
         Logger.getLogger("com.cockroachlabs").info("Inflate");
 
