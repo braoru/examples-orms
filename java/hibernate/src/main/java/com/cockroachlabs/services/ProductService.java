@@ -151,10 +151,7 @@ public class ProductService {
     }
 
 
-
-
-
-    @GET
+/*    @GET
     @Path("/inflation/{productID}")
     @Produces("text/plain")
     public String increasePriceByOne2(@PathParam("productID") long productID){
@@ -179,6 +176,43 @@ public class ProductService {
                 e.printStackTrace();
                 Query rollbackSavepointQuery = session.createNativeQuery("ROLLBACK TO SAVEPOINT COCKROACH_RESTART;");
                 rollbackSavepointQuery.executeUpdate();
+                Logger.getLogger("com.cockroachlabs").info("SUCCESSFULLY ROLLBACK TO SAVEPOINT");
+                return "roll";
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }*/
+
+     @GET
+    @Path("/inflation/{productID}")
+    @Produces("text/plain")
+    public String increasePriceByOne2(@PathParam("productID") long productID){
+        Logger.getLogger("com.cockroachlabs").info("increasePriceByOne2");
+        try (Session session = SessionUtil.getSession()) {
+
+            Transaction tx = session.beginTransaction();
+
+            Query savepointQuery = session.createNativeQuery("SAVEPOINT COCKROACH_RESTART;");
+            savepointQuery.executeUpdate();
+
+            try {
+                Query query = session.createNativeQuery("SELECT price FROM Products WHERE id= " + productID + ";");
+                List p2 = query.getResultList();
+
+                Query q2 = session.createNativeQuery("UPDATE Products SET price = price + 1 where id=" + productID + ";");
+                q2.executeUpdate();
+
+                Query commitSavepointQuery = session.createNativeQuery("RELEASE SAVEPOINT COCKROACH_RESTART;");
+                commitSavepointQuery.executeUpdate();
+               // tx.commit();
+                return "ok";
+            }catch(Exception e){
+                Query rollbackSavepointQuery = session.createNativeQuery("ROLLBACK TO SAVEPOINT COCKROACH_RESTART;");
+                rollbackSavepointQuery.executeUpdate();
+                tx.commit();
                 Logger.getLogger("com.cockroachlabs").info("SUCCESSFULLY ROLLBACK TO SAVEPOINT");
                 return "roll";
             }

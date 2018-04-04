@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AbstractConcurrencyTest {
 
-    private static final int DEFAULT_THREADS = 5;
+    private static final int DEFAULT_THREADS = 4;
     private static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5 * DEFAULT_THREADS;
 
 

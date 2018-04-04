@@ -20,6 +20,8 @@ import java.util.List;
 import static org.hibernate.internal.CoreLogging.messageLogger;
 
 /**
+ * Coming from https://github.com/cockroachdb/hibernate-savepoint-fix
+ *
  * Copied from
  *   https://github.com/hibernate/hibernate-orm/blob/master/hibernate-core/src/main/java/org/hibernate/resource/transaction/backend/jdbc/internal/JdbcResourceLocalTransactionCoordinatorImpl.java
  * and modified to remove the "rollback only" state for transactions, to support returning to a savepoint,
@@ -235,6 +237,15 @@ public class CockroachDBTransactionCoordinator implements TransactionCoordinator
         @Override
         public void markRollbackOnly() {
             // we don't want our transactions to become rollback only, because you could restore to a savepoint
+        }
+
+        @Override
+        public boolean isActive(boolean isMarkedRollbackConsideredActive) {
+            final TransactionStatus status = getStatus();
+            return TransactionStatus.ACTIVE == status
+                    || ( isMarkedRollbackConsideredActive && TransactionStatus.MARKED_ROLLBACK == status )
+                    || ( isMarkedRollbackConsideredActive && TransactionStatus.FAILED_COMMIT == status )
+                    || ( isMarkedRollbackConsideredActive && TransactionStatus.ROLLED_BACK == status );
         }
     }
 }

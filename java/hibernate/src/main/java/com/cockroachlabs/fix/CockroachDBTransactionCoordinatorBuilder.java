@@ -13,6 +13,8 @@ import org.hibernate.resource.transaction.spi.TransactionCoordinatorOwner;
 import org.hibernate.tool.schema.internal.exec.JdbcContext;
 
 /**
+ * Coming from https://github.com/cockroachdb/hibernate-savepoint-fix
+ *
  * Created by justin on 7/12/17.
  */
 public class CockroachDBTransactionCoordinatorBuilder implements TransactionCoordinatorBuilder {
